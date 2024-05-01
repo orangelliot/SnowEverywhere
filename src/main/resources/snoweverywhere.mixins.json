@@ -1,0 +1,13 @@
+{
+	"required": true,
+	"package": "com.snoweverywhere.mixin",
+	"refmap": "snoweverywhere.refmap.json",
+	"compatibilityLevel": "JAVA_17",
+	"mixins": [
+		"InterceptSnowPlayerPlacement",
+		"InterceptTest"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

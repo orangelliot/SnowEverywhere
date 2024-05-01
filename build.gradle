@@ -21,13 +21,24 @@ repositories {
 loom {
     splitEnvironmentSourceSets()
 
+	runs {
+		client {
+			// Add a VM arg
+			vmArgs "-Dmixin.debug=true"
+		}
+	}
+
 	mods {
-		"modid" {
+		"snoweverywhere" {
 			sourceSet sourceSets.main
 			sourceSet sourceSets.client
 		}
 	}
 
+	mixin {
+		useLegacyMixinAp = true
+		defaultRefmapName = "snoweverywhere.refmap.json"
+	}
 }
 
 dependencies {
