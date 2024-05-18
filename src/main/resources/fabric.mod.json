@@ -16,10 +16,10 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"com.snoweverywhere.SnowEverywhere"
+			"com.snoweverywhere.SnowEverywhereMain"
 		],
 		"client": [
-			"com.snoweverywhere.SEClient"
+			"com.snoweverywhere.SnowEverywhereClient"
 		]
 	},
 	"mixins": [

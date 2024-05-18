@@ -3,7 +3,6 @@
 	"package": "com.snoweverywhere.mixin.client",
 	"compatibilityLevel": "JAVA_17",
 	"client": [
-		"InterceptSnowRender"
 	],
 	"injectors": {
 		"defaultRequire": 1

@@ -1,6 +1,8 @@
-package com.snoweverywhere;
+package com.snoweverywhere.blocks.entities;
 
 import org.jetbrains.annotations.Nullable;
+
+import com.snoweverywhere.blocks.registries.SnowEverywhereBlockEntities;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -11,23 +13,25 @@ import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.util.math.BlockPos;
 
 public class SnowEverywhereBlockEntity extends BlockEntity{
-    int model = 0;
+    boolean notify = true;
+    int layers = 1;
     
     public SnowEverywhereBlockEntity(BlockPos pos, BlockState state) {
-        super(SnowEverywhereBlock.BLOCK_ENTITY, pos, state);
+        super(SnowEverywhereBlockEntities.SNOW_EVERYWHERE_BLOCK_ENTITY, pos, state);
     }
 
     @Override
     public void writeNbt(NbtCompound nbt) {
-        nbt.putInt("model", model);
+        nbt.putBoolean("notify", notify);
+        nbt.putInt("layers", layers);
         super.writeNbt(nbt);
     }
 
     @Override
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
- 
-        model = nbt.getInt("model");
+        notify = nbt.getBoolean("notify");
+        layers = nbt.getInt("layers");
     }
 
     @Nullable

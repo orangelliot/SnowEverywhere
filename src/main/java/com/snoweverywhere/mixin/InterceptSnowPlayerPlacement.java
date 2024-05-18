@@ -1,7 +1,7 @@
 package com.snoweverywhere.mixin;
 
-import com.snoweverywhere.SnowEverywhere;
-import com.snoweverywhere.SnowEverywhereBlock;
+import com.snoweverywhere.blocks.SnowEverywhereBlock;
+import com.snoweverywhere.blocks.registries.SnowEverywhereBlocks;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -24,7 +24,7 @@ import net.minecraft.block.SnowBlock;
 @Mixin(SnowBlock.class)
 public abstract class InterceptSnowPlayerPlacement {
     SnowBlock snowblock = (SnowBlock) Blocks.SNOW;
-    SnowEverywhereBlock snoweverywhereblock = (SnowEverywhereBlock) SnowEverywhere.SNOW_EVERYWHERE_BLOCK;
+    SnowEverywhereBlock snoweverywhereblock = (SnowEverywhereBlock) SnowEverywhereBlocks.SNOW_EVERYWHERE_BLOCK;
     @Shadow public static @Final IntProperty LAYERS;
 
     @Inject(method = "getPlacementState", at = @At("HEAD"), cancellable = true)
