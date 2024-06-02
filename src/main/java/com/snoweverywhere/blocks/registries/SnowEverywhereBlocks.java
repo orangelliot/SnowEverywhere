@@ -4,6 +4,7 @@ import com.snoweverywhere.blocks.SnowEverywhereBlock;
 
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.MapColor;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.registry.Registries;
@@ -19,12 +20,15 @@ public class SnowEverywhereBlocks {
             AbstractBlock.Settings.create()
             .mapColor(MapColor.WHITE)
             .replaceable()
-            .notSolid()
-            .ticksRandomly()
             .strength(0.1f)
             .requiresTool()
             .sounds(BlockSoundGroup.SNOW)
-            .blockVision((state, world, pos) -> state.get(SnowEverywhereBlock.LAYERS) >= 8)
+            .nonOpaque()
+            .dynamicBounds()
+            .ticksRandomly()
+            .solidBlock(Blocks::never)
+            .suffocates(Blocks::never)
+            .blockVision(Blocks::never)
             .pistonBehavior(PistonBehavior.DESTROY),
             () -> SnowEverywhereBlockEntities.SNOW_EVERYWHERE_BLOCK_ENTITY
         )
