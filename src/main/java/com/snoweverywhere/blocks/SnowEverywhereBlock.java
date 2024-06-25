@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 
 import com.snoweverywhere.SnowEverywhereMain;
 import com.snoweverywhere.blocks.entities.SnowEverywhereBlockEntity;
-import com.snoweverywhere.blocks.registries.SnowEverywhereBlockEntities;
+import com.snoweverywhere.blocks.registries.SEBlockEntities;
 
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
@@ -38,8 +38,7 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
 public class SnowEverywhereBlock extends BlockWithEntity{
-    public static final MapCodec<SnowEverywhereBlock> CODEC = SnowEverywhereBlock.createCodec(settings -> new SnowEverywhereBlock((AbstractBlock.Settings)settings, () -> SnowEverywhereBlockEntities.SNOW_EVERYWHERE_BLOCK_ENTITY));
-    public static final IntProperty LAYERS = Properties.LAYERS;
+    public static final MapCodec<SnowEverywhereBlock> CODEC = SnowEverywhereBlock.createCodec(settings -> new SnowEverywhereBlock((AbstractBlock.Settings)settings, () -> SEBlockEntities.SNOW_EVERYWHERE_BLOCK_ENTITY));
     public static final int MAX_LAYERS = 8;
     private NbtCompound nbt;
 
@@ -72,7 +71,7 @@ public class SnowEverywhereBlock extends BlockWithEntity{
     @Override
     @Nullable
     public BlockState getPlacementState(ItemPlacementContext ctx) {
-        BlockState blockState = ctx.getWorld().getBlockState(ctx.getBlockPos());
+        /*BlockState blockState = ctx.getWorld().getBlockState(ctx.getBlockPos());
         if (blockState.isOf(this)) {
             int i = blockState.get(SnowBlock.LAYERS);
             SnowEverywhereBlockEntity entity = (SnowEverywhereBlockEntity)ctx.getWorld().getBlockEntity(ctx.getBlockPos());
@@ -82,7 +81,7 @@ public class SnowEverywhereBlock extends BlockWithEntity{
                 entity.markDirty();
             }
             return (BlockState)blockState.with(SnowBlock.LAYERS, Math.min(8, i + 1));
-        }
+        }*/
         return this.getDefaultState();
     }
 
@@ -122,19 +121,19 @@ public class SnowEverywhereBlock extends BlockWithEntity{
     public void updateShapes(BlockState state, BlockView world, BlockPos pos){
         SnowEverywhereBlockEntity entity = (SnowEverywhereBlockEntity)world.getBlockEntity(pos);
         if(entity != null){
-            entity.writeNbt(nbt);
+            entity.writeNbt(nbt, null);
             if(nbt.getBoolean("notify_block")){
-                savedShape = getShape(entity, state.get(LAYERS));
-                savedCollisionShape = getShape(entity, state.get(LAYERS) - 1);
+                savedShape = getShape(entity, state.get(Properties.LAYERS));
+                savedCollisionShape = getShape(entity, state.get(Properties.LAYERS) - 1);
                 nbt.putBoolean("notify_block", false);
-                entity.readNbt(nbt);
+                entity.readNbt(nbt, null);
                 entity.markDirty();
             }
         }
     }
 
     public VoxelShape getShape(SnowEverywhereBlockEntity entity, int layers) {
-            entity.writeNbt(nbt);
+            entity.writeNbt(nbt, null);
             byte[] obj = nbt.getByteArray("surfaces");
             if(obj == null)
                 return DEFAULT_SHAPE;
@@ -166,7 +165,7 @@ public class SnowEverywhereBlock extends BlockWithEntity{
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(LAYERS);
+        builder.add(Properties.LAYERS);
     }
 
     static Object deserialize(byte[] bytes) {

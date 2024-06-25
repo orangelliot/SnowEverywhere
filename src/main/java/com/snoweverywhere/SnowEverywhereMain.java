@@ -1,14 +1,18 @@
 package com.snoweverywhere;
 
-import com.snoweverywhere.blocks.registries.SnowEverywhereBlockEntities;
-import com.snoweverywhere.blocks.registries.SnowEverywhereBlocks;
+import com.snoweverywhere.blocks.registries.SEBlockEntities;
+import com.snoweverywhere.blocks.registries.SEBlocks;
+import com.snoweverywhere.blocks.registries.SEProperties;
 
 import net.fabricmc.api.ModInitializer;
 
 public class SnowEverywhereMain implements ModInitializer {
+	public static final ModConfig CONFIG = ConfigLoader.loadConfig();
+
 	@Override
 	public void onInitialize() {
-		SnowEverywhereBlocks.registerBlocks();
-		SnowEverywhereBlockEntities.registerBlockEntities();
+		//SEBlocks.registerBlocks();
+		//SEBlockEntities.registerBlockEntities();
+		SEProperties.registerProperties();
 	}
 }

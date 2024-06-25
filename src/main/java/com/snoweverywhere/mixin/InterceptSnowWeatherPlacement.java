@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.snoweverywhere.blocks.registries.SnowEverywhereBlocks;
+import com.snoweverywhere.blocks.registries.SEBlocks;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -23,14 +23,14 @@ public abstract class InterceptSnowWeatherPlacement{
     World world = (ServerWorld)(Object)this;
 
     @Inject(method = "tickIceAndSnow", at = @At(value = "TAIL"))
-    public void interceptSnowWeatherPlacement(BlockPos pos, CallbackInfo ci){
+    public void interceptSnowWeatherPlacement(BlockPos pos, CallbackInfo ci){/*
         BlockPos topPos = world.getTopPosition(Heightmap.Type.MOTION_BLOCKING, pos);
         BlockPos topBlock = topPos.down();
         BlockState blockState = world.getBlockState(topPos);
         if (world.isRaining()){
             if (world.getBiome(topPos).value().canSetSnow(world, topPos)){
                 Boolean isFlat = Block.isFaceFullSquare(world.getBlockState(topBlock).getCollisionShape(world, topBlock), Direction.UP);
-                if (blockState.isOf(SnowEverywhereBlocks.SNOW_EVERYWHERE_BLOCK)){
+                if (blockState.isOf(SEBlocks.SNOW_EVERYWHERE_BLOCK)){
                     int snowAccumulationHeight = world.getGameRules().getInt(GameRules.SNOW_ACCUMULATION_HEIGHT);
                     int snowCurrentHeight = blockState.get(SnowBlock.LAYERS);
                     if (snowCurrentHeight < Math.min(snowAccumulationHeight, 8)) {
@@ -40,9 +40,9 @@ public abstract class InterceptSnowWeatherPlacement{
                     }
                 }
                 if (!isFlat){
-                    world.setBlockState(topPos, SnowEverywhereBlocks.SNOW_EVERYWHERE_BLOCK.getDefaultState());
+                    world.setBlockState(topPos, SEBlocks.SNOW_EVERYWHERE_BLOCK.getDefaultState());
                 }
             }
-        }
+        }*/
     }
 }

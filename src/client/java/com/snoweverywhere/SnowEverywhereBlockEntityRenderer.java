@@ -69,7 +69,7 @@ public class SnowEverywhereBlockEntityRenderer
     private BlockState oldState = null;
     private int oldLayers = 0;
 
-    public static final SpriteIdentifier SNOW_SPRITE_IDENTIFIER = new SpriteIdentifier(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/snow"));
+    //public static final SpriteIdentifier SNOW_SPRITE_IDENTIFIER = new SpriteIdentifier(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/snow"));
 
     private static final int X_1 = 0;
     private static final int Z_1 = 1;
@@ -87,9 +87,9 @@ public class SnowEverywhereBlockEntityRenderer
         BlockPos below = entity.getPos().down();
         World world = entity.getWorld();
         BlockState stateBelow = world.getBlockState(below);
-        entity.writeNbt(nbt);
+        entity.writeNbt(nbt, null);
         int layers = nbt.getInt("layers");
-        vertexConsumer = SNOW_SPRITE_IDENTIFIER.getVertexConsumer(vertexConsumers, RenderLayer::getEntityCutout);
+        //vertexConsumer = SNOW_SPRITE_IDENTIFIER.getVertexConsumer(vertexConsumers, RenderLayer::getEntityCutout);
         modelData = getTexturedModelData(stateBelow, Direction.UP, world, layers);
         ModelPart modelPart = modelData.createModel();
         matrices.push();
@@ -146,7 +146,7 @@ public class SnowEverywhereBlockEntityRenderer
 
         nbt.putByteArray("surfaces", serialize(surfaces));
         nbt.putBoolean("notify_block", true);
-        entity.readNbt(nbt);
+        //entity.readNbt(nbt, null);
         entity.markDirty();
 
         int i = 0;

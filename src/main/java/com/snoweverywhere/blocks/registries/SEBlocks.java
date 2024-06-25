@@ -12,10 +12,10 @@ import net.minecraft.registry.Registry;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
 
-public class SnowEverywhereBlocks {
+public class SEBlocks {
     public static final Block SNOW_EVERYWHERE_BLOCK = Registry.register(
         Registries.BLOCK,
-        new Identifier("snoweverywhere", "snow_everywhere_block"),
+        Identifier.of("snoweverywhere", "snow_everywhere_block"),
         new SnowEverywhereBlock(
             AbstractBlock.Settings.create()
             .mapColor(MapColor.WHITE)
@@ -30,7 +30,7 @@ public class SnowEverywhereBlocks {
             .suffocates(Blocks::never)
             .blockVision(Blocks::never)
             .pistonBehavior(PistonBehavior.DESTROY),
-            () -> SnowEverywhereBlockEntities.SNOW_EVERYWHERE_BLOCK_ENTITY
+            () -> SEBlockEntities.SNOW_EVERYWHERE_BLOCK_ENTITY
         )
     );
 
