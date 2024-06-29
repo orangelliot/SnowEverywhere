@@ -35,7 +35,6 @@ import net.minecraft.world.World;
 
 public class SnowEverywhereBlock extends BlockWithEntity{
     public static final MapCodec<SnowEverywhereBlock> CODEC = SnowEverywhereBlock.createCodec(settings -> new SnowEverywhereBlock((AbstractBlock.Settings)settings, () -> SnowEverywhereBlockEntities.SNOW_EVERYWHERE_BLOCK_ENTITY));
-    public static final int MAX_LAYERS = 8;
 
     private static final int X_1 = 0;
     private static final int Z_1 = 1;
@@ -43,9 +42,7 @@ public class SnowEverywhereBlock extends BlockWithEntity{
     private static final int Z_2 = 3;
     private static final int Y = 4;
 
-    private static final VoxelShape DEFAULT_SHAPE = Block.createCuboidShape(0.0, 0.0, 0.0, 16.0, 16.0, 16.0);
-    private VoxelShape savedShape = DEFAULT_SHAPE;
-    private VoxelShape savedCollisionShape = DEFAULT_SHAPE;
+    private static final VoxelShape DEFAULT_SHAPE = Block.createCuboidShape(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
     public SnowEverywhereBlock(AbstractBlock.Settings settings, Supplier<BlockEntityType<? extends SnowEverywhereBlockEntity>> supplier) {
         super(settings);
@@ -87,6 +84,7 @@ public class SnowEverywhereBlock extends BlockWithEntity{
         SnowEverywhereBlockEntity entity = (SnowEverywhereBlockEntity)world.getBlockEntity(pos);
         if(entity != null){
             NbtCompound nbt = new NbtCompound();
+            entity.writeNbt(nbt);
             nbt.putBoolean("notify_renderer", true);
             entity.readNbt(nbt);
             entity.markDirty();
@@ -104,6 +102,11 @@ public class SnowEverywhereBlock extends BlockWithEntity{
     }
 
     @Override
+    public VoxelShape getRaycastShape(BlockState state, BlockView world, BlockPos pos) {
+        return getShape(state, world, pos, false);
+    }
+
+    @Override
     public VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
         return getShape(state, world, pos, true);
     }
@@ -113,6 +116,7 @@ public class SnowEverywhereBlock extends BlockWithEntity{
         SnowEverywhereBlockEntity entity = (SnowEverywhereBlockEntity)world.getBlockEntity(pos);
         if(entity != null){
             NbtCompound nbt = new NbtCompound();
+            entity.writeNbt(nbt);
             nbt.putBoolean("notify_renderer", true);
             entity.readNbt(nbt);
             entity.markDirty();
@@ -124,9 +128,11 @@ public class SnowEverywhereBlock extends BlockWithEntity{
         if(entity == null) return DEFAULT_SHAPE;
         NbtCompound nbt = new NbtCompound();
         entity.writeNbt(nbt);
-        int layers = collision ? nbt.getInt("layers") - 1 : nbt.getInt("layers");
+        int layers = nbt.getInt("layers");
+        //System.out.println("getting layers returned " + layers + " layers.\ncollision = " + collision);
+        if(collision) layers--;
         byte[] obj = nbt.getByteArray("surfaces");
-        if (obj == null) return DEFAULT_SHAPE;
+        if (obj.length == 0) return DEFAULT_SHAPE;
         List<float[]> surfaces = (List<float[]>) deserialize(obj);
 
         VoxelShape shape = null;
@@ -158,6 +164,7 @@ public class SnowEverywhereBlock extends BlockWithEntity{
     }
 
     static Object deserialize(byte[] bytes) {
+        //System.out.println("deserializing : " + Arrays.toString(bytes));
         ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
         try (ObjectInput in = new ObjectInputStream(bis)) {
             return in.readObject();

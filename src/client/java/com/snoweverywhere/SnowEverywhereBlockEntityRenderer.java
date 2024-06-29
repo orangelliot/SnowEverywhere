@@ -85,6 +85,7 @@ public class SnowEverywhereBlockEntityRenderer
         NbtCompound nbt = new NbtCompound();
         entity.writeNbt(nbt);
         boolean notify = nbt.getBoolean("notify_renderer");
+        notify = true;
         int layers = nbt.getInt("layers");
         if (notify) {
             if (face != null)
