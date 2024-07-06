@@ -3,11 +3,9 @@ package com.snoweverywhere;
 import com.snoweverywhere.blocks.entities.SnowEverywhereBlockEntity;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Properties;
 import java.util.stream.Stream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -16,7 +14,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.ModelData;
 import net.minecraft.client.model.ModelPart;
@@ -48,9 +45,10 @@ import net.minecraft.world.World;
 
 public class SnowEverywhereBlockEntityRenderer
         implements BlockEntityRenderer<SnowEverywhereBlockEntity> {
-    private final BakedModelManager bakedModelManager = MinecraftClient.getInstance().getBakedModelManager();
     private final Random random = Random.create();
-    private static final SpriteIdentifier SNOW_SPRITE_IDENTIFIER = new SpriteIdentifier(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/snow"));
+    
+    private static final BakedModelManager bakedModelManager = MinecraftClient.getInstance().getBakedModelManager();
+    private static final SpriteIdentifier SNOW_SPRITE_IDENTIFIER = new SpriteIdentifier(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, Identifier.of("minecraft", "block/snow"));
 
     private static final int X_1 = 0;
     private static final int Z_1 = 1;
@@ -83,34 +81,27 @@ public class SnowEverywhereBlockEntityRenderer
         List<float[]> surfaces = new ArrayList<float[]>();
         List<BakedQuad> quads = getBakedQuads(state, null, world);
         NbtCompound nbt = new NbtCompound();
-        entity.writeNbt(nbt);
-        boolean notify = nbt.getBoolean("notify_renderer");
+        entity.writeNbt(nbt, null);
         int layers = nbt.getInt("layers");
-        if (notify) {
-            if (face != null)
-                quads = Stream.concat(quads.stream(), getBakedQuads(state, face, world).stream()).toList();
 
-            for (BakedQuad quad : quads) {
-                float[] surface = getQuadSurface(quad.getVertexData());
-                if (surface[X_1] != surface[X_2] && surface[Z_1] != surface[Z_2])
-                    surfaces.add(getQuadSurface(quad.getVertexData()));
-            }
+        if (face != null)
+            quads = Stream.concat(quads.stream(), getBakedQuads(state, face, world).stream()).toList();
 
-            if (surfaces.size() == 0) {
-                return TexturedModelData.of(modelData, 64, 64);
-            }
-
-            surfaces = getNonOverlappingSurfaces(surfaces);
-
-            nbt.putByteArray("surfaces", serialize(surfaces));
-            nbt.putBoolean("notify_renderer", false);
-            nbt.putBoolean("notify_block", true);
-            entity.readNbt(nbt);
-            entity.markDirty();
-        } else {
-            byte[] obj = nbt.getByteArray("surfaces");
-            surfaces = (List<float[]>) deserialize(obj);
+        for (BakedQuad quad : quads) {
+            float[] surface = getQuadSurface(quad.getVertexData());
+            if (surface[X_1] != surface[X_2] && surface[Z_1] != surface[Z_2])
+                surfaces.add(getQuadSurface(quad.getVertexData()));
         }
+
+        if (surfaces.size() == 0) {
+            return TexturedModelData.of(modelData, 64, 64);
+        }
+
+        surfaces = getNonOverlappingSurfaces(surfaces);
+
+        nbt.putByteArray("surfaces", serialize(surfaces));
+        entity.readNbt(nbt, null);
+        entity.markDirty();
 
         int i = 0;
         for (float[] surface : surfaces) {
@@ -245,9 +236,9 @@ public class SnowEverywhereBlockEntityRenderer
         try (ObjectInput in = new ObjectInputStream(bis)) {
             return in.readObject();
         } catch (Exception ex) {
-            //System.out.println("Exception in deserializing: " + ex);
-            //return null;
-            throw new RuntimeException(ex);
+            System.out.println("Exception in deserializing: " + ex);
+            return null;
+            //throw new RuntimeException(ex);
         }
     }
 }

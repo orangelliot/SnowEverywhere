@@ -15,7 +15,7 @@ import net.minecraft.util.Identifier;
 public class SnowEverywhereBlocks {
     public static final Block SNOW_EVERYWHERE_BLOCK = Registry.register(
         Registries.BLOCK,
-        new Identifier("snoweverywhere", "snow_everywhere_block"),
+        Identifier.of("snoweverywhere", "snow_everywhere_block"),
         new SnowEverywhereBlock(
             AbstractBlock.Settings.create()
             .mapColor(MapColor.WHITE)

@@ -11,7 +11,7 @@ import net.minecraft.util.Identifier;
 public class SnowEverywhereBlockEntities {
     public static final BlockEntityType<SnowEverywhereBlockEntity> SNOW_EVERYWHERE_BLOCK_ENTITY = Registry.register(
         Registries.BLOCK_ENTITY_TYPE,
-        new Identifier("snoweverywhere", "snow_everywhere_block_entity"),
+        Identifier.of("snoweverywhere", "snow_everywhere_block_entity"),
         BlockEntityType.Builder.create(SnowEverywhereBlockEntity::new, SnowEverywhereBlocks.SNOW_EVERYWHERE_BLOCK).build()
     );
 

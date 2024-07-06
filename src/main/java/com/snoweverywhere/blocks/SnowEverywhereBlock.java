@@ -2,9 +2,7 @@ package com.snoweverywhere.blocks;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInput;
@@ -13,7 +11,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
 
-import com.snoweverywhere.SnowEverywhereMain;
 import com.snoweverywhere.blocks.entities.SnowEverywhereBlockEntity;
 import com.snoweverywhere.blocks.registries.SnowEverywhereBlockEntities;
 
@@ -44,8 +41,6 @@ public class SnowEverywhereBlock extends BlockWithEntity{
     private static final int Y = 4;
 
     private static final VoxelShape DEFAULT_SHAPE = Block.createCuboidShape(0.0, 0.0, 0.0, 16.0, 16.0, 16.0);
-    private VoxelShape savedShape = DEFAULT_SHAPE;
-    private VoxelShape savedCollisionShape = DEFAULT_SHAPE;
 
     public SnowEverywhereBlock(AbstractBlock.Settings settings, Supplier<BlockEntityType<? extends SnowEverywhereBlockEntity>> supplier) {
         super(settings);
@@ -69,11 +64,10 @@ public class SnowEverywhereBlock extends BlockWithEntity{
         SnowEverywhereBlockEntity entity = (SnowEverywhereBlockEntity)ctx.getWorld().getBlockEntity(ctx.getBlockPos());
         if (state.isOf(this) && entity != null) {
             NbtCompound nbt = new NbtCompound();
-            entity.writeNbt(nbt);
+            entity.writeNbt(nbt, null);
             int layers = nbt.getInt("layers");
             nbt.putInt("layers", Math.min(8, layers + 1));
-            nbt.putBoolean("notify_renderer", true);
-            entity.readNbt(nbt);
+            entity.readNbt(nbt, null);
             entity.markDirty();
             return state;
         }
@@ -84,13 +78,6 @@ public class SnowEverywhereBlock extends BlockWithEntity{
     public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify){
         if(oldState.isOf(state.getBlock()) || world.isClient)
             return;
-        SnowEverywhereBlockEntity entity = (SnowEverywhereBlockEntity)world.getBlockEntity(pos);
-        if(entity != null){
-            NbtCompound nbt = new NbtCompound();
-            nbt.putBoolean("notify_renderer", true);
-            entity.readNbt(nbt);
-            entity.markDirty();
-        }
     }
 
     @Override
@@ -109,25 +96,22 @@ public class SnowEverywhereBlock extends BlockWithEntity{
     }
 
     @Override
-    public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-        SnowEverywhereBlockEntity entity = (SnowEverywhereBlockEntity)world.getBlockEntity(pos);
-        if(entity != null){
-            NbtCompound nbt = new NbtCompound();
-            nbt.putBoolean("notify_renderer", true);
-            entity.readNbt(nbt);
-            entity.markDirty();
-        }
+    public VoxelShape getRaycastShape(BlockState state, BlockView world, BlockPos pos) {
+        return getShape(state, world, pos, false);
     }
 
     public VoxelShape getShape(BlockState state, BlockView world, BlockPos pos, Boolean collision){
         SnowEverywhereBlockEntity entity = (SnowEverywhereBlockEntity)world.getBlockEntity(pos);
         if(entity == null) return DEFAULT_SHAPE;
         NbtCompound nbt = new NbtCompound();
-        entity.writeNbt(nbt);
+        entity.writeNbt(nbt, null);
         int layers = collision ? nbt.getInt("layers") - 1 : nbt.getInt("layers");
         byte[] obj = nbt.getByteArray("surfaces");
-        if (obj == null) return DEFAULT_SHAPE;
+        if (obj.length == 0) return DEFAULT_SHAPE;
         List<float[]> surfaces = (List<float[]>) deserialize(obj);
+        for(float[] surface : surfaces){
+            System.out.println(Arrays.toString(surface));
+        }
 
         VoxelShape shape = null;
         for (float[] surface : surfaces) {
@@ -162,9 +146,9 @@ public class SnowEverywhereBlock extends BlockWithEntity{
         try (ObjectInput in = new ObjectInputStream(bis)) {
             return in.readObject();
         } catch (Exception ex) {
-            //System.out.println("Exception in deserializing: " + ex);
-            //return null;
-            throw new RuntimeException(ex);
+            System.out.println("Exception in deserializing: " + ex);
+            return null;
+            //throw new RuntimeException(ex);
         }
     }
 }
